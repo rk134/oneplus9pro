@@ -52,9 +52,9 @@ gki-only)
 esac
 
 ################################################################################
-# Enable VOOC for 9RT
+# Enable VOOC for 9RT & lunaa (GT master edition)
 
-if [ ${DEVICE} == "9RT" ]; then
+if [[ ${DEVICE} == "9RT" ] || [ ${DEVICE} == "LUNAA" ]]; then
 	export OPLUS_VND_ENV_CHG_OP9RT_PMIC_VOOCPHY=yes
 fi
 
