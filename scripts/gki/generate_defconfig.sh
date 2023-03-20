@@ -79,6 +79,9 @@ case "$REQUIRED_DEFCONFIG" in
                 FINAL_DEFCONFIG_BLEND+=" $QCOM_DEBUG_FS_FRAG"
                 FINAL_DEFCONFIG_BLEND+=" $OPLUS_NQGKI_FRAG"
                 FINAL_DEFCONFIG_BLEND+=" $QCOM_NQGKI_FRAG"
+				if [ $DEVICE == "LUNAA" ]; then
+					FINAL_DEFCONFIG_BLEND+=" $OPLUS_YUPIK_NQGKI_FRAG"
+				fi
                 ${SCRIPTS_ROOT}/fragment_allyesconfig.sh $OPLUS_NGKI_FRAG $OPLUS_GKI_ALLYES_FRAG
                 ${SCRIPTS_ROOT}/fragment_allyesconfig.sh $QCOM_NGKI_FRAG $QCOM_GKI_ALLYES_FRAG
                 FINAL_DEFCONFIG_BLEND+=" $OPLUS_GKI_ALLYES_FRAG "
