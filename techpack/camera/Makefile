@@ -87,8 +87,12 @@ LINUXINCLUDE    += \
 endif
 
 ifeq ($(CONFIG_ARCH_YUPIK), y)
+ifneq ($(CONFIG_NGKI),y)
 LINUXINCLUDE    += \
 		-include $(srctree)/techpack/camera/config/yupikcameraconf.h
+else
+include $(srctree)/techpack/camera/config/yupikngkicamera.conf
+endif
 endif
 
 ifeq ($(CONFIG_ARCH_SM6150), y)
