@@ -60,7 +60,7 @@ fi
 
 if [ ${DEVICE} == "LUNAA" ]; then
 	export OPLUS_VND_ENV_CHG_OP9RT_PMIC_VOOCPHY=yes
-	export DEVICE=lunaa
+	export DEVICE=LUNAA
 fi
 
 ################################################################################
