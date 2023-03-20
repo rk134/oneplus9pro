@@ -3758,51 +3758,38 @@ void sde_kms_display_early_wakeup(struct drm_device *dev,
 }
 
 #ifdef CONFIG_DEEPSLEEP
-static int _sde_kms_pm_deepsleep_helper(struct sde_kms *sde_kms, bool enter)
+static int _sde_kms_pm_set_clk_src(struct sde_kms *sde_kms, bool enable)
 {
 	int i, rc = 0;
 	void *display;
 	struct dsi_display *dsi_display;
 
-	if (mem_sleep_current != PM_SUSPEND_MEM)
-		return 0;
+	if (mem_sleep_current == PM_SUSPEND_MEM) {
+		SDE_INFO("Deepsleep\n");
 
-	SDE_INFO("Deepsleep : enter %d\n", enter);
+		for (i = 0; i < sde_kms->dsi_display_count; i++) {
+			display = sde_kms->dsi_displays[i];
+			dsi_display = (struct dsi_display *)display;
 
-	for (i = 0; i < sde_kms->dsi_display_count; i++) {
-		display = sde_kms->dsi_displays[i];
-		dsi_display = (struct dsi_display *)display;
+			if (!dsi_display->needs_clk_src_reset)
+				continue;
 
+			if (enable)
+				rc = dsi_display_set_clk_src(dsi_display);
+			else
+				rc = dsi_display_unset_clk_src(dsi_display);
 
-		if (enter) {
-			/* During deepsleep, clk_parent are reset at HW
-			 * but sw caching is retained in clk framework. To
-			 * maintain same state. unset parents and restore
-			 * during exit.
-			 */
-			if (dsi_display->needs_clk_src_reset)
-				(void)dsi_display_unset_clk_src(dsi_display);
-
-			/* DSI ctrl regulator can be disabled, even in static
-			 * screen, during deepsleep
-			 */
-			if (dsi_display->needs_ctrl_vreg_disable)
-				(void)dsi_display_ctrl_vreg_off(dsi_display);
-		} else {
-			if (dsi_display->needs_ctrl_vreg_disable)
-				(void)dsi_display_ctrl_vreg_on(dsi_display);
-
-			if (dsi_display->needs_clk_src_reset)
-				(void)dsi_display_set_clk_src(dsi_display);
-
+			if (rc) {
+				SDE_ERROR("failed to set clks rc:%d\n", rc);
+				return rc;
+			}
 		}
 	}
 
 	return rc;
 }
 #else
-static inline int _sde_kms_pm_deepsleep_helper(struct sde_kms *sde_kms,
-					bool enter)
+static inline int _sde_kms_pm_set_clk_src(struct sde_kms *sde_kms, bool enable)
 {
 	return 0;
 }
@@ -3999,7 +3986,8 @@ unlock:
 	pm_runtime_put_sync(dev);
 	pm_runtime_get_noresume(dev);
 
-	_sde_kms_pm_deepsleep_helper(sde_kms, true);
+	/* reset clock source based on PM suspend state */
+	_sde_kms_pm_set_clk_src(sde_kms, false);
 
 	/* dump clock state before entering suspend */
 	if (sde_kms->pm_suspend_clk_dump)
@@ -4038,8 +4026,8 @@ retry:
 		goto end;
 	}
 
-	/* If coming out of deepsleep, restore resources.*/
-	_sde_kms_pm_deepsleep_helper(sde_kms, false);
+	/* reset clock source based on PM suspend state */
+	_sde_kms_pm_set_clk_src(sde_kms, true);
 
 	sde_kms->suspend_block = false;
 
