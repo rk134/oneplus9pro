@@ -163,9 +163,9 @@ ifeq ($(OPLUS_FEATURE_SECURE_KEYINTERFACESGUARD),yes)
 KBUILD_CFLAGS += -DOPLUS_DISALLOW_KEY_INTERFACES
 endif
 
-ifeq ($(DEVICE), 9RT)
+ifeq ($(TARGET_DEVICE_KERNEL), 9RT)
 $(info Building kernel for OnePlus 9RT, enabling VOOC)
-else ifeq ($(DEVICE), LUNAA)
+else ifeq ($(TARGET_DEVICE_KERNEL), LUNAA)
 $(info Building kernel for Realme GT Master Edition, enabling VOOC)
 else
 $(info Building kernel for OnePlus 9 Pro)

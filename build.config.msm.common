@@ -1,10 +1,10 @@
 ################################################################################
 ## DTB general support
-if [ "${DEVICE}" == "9RT" ]; then
+if [ "${TARGET_DEVICE_KERNEL}" == "9RT" ]; then
 	DTB_DIR=vendor/oplus/martini
-elif [ "${DEVICE}" == "9P" ]; then
+elif [ "${TARGET_DEVICE_KERNEL}" == "9P" ]; then
 	DTB_DIR=vendor/oplus/lemonadev
-elif [ "${DEVICE}" == "LUNAA" ]; then
+elif [ "${TARGET_DEVICE_KERNEL}" == "LUNAA" ]; then
 	DTB_DIR=vendor/oplus/lunaa
 fi
 

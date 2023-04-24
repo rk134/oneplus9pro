@@ -801,7 +801,7 @@ KBUILD_CFLAGS += -Os
 endif
 
 # Optimise kernel binary for lahaina/yupik's CPU
-ifeq ($(DEVICE), LUNAA)
+ifeq ($(TARGET_DEVICE_KERNEL), LUNAA)
 KBUILD_CFLAGS	+= -mcpu=cortex-a78
 KBUILD_AFLAGS	+= -mcpu=cortex-a78
 else
